@@ -1,5 +1,7 @@
+import CONFIGINTERFACE from "./CONFIG.INTERFACE";
+
 export default interface DotInterface {
-  readonly colors: ["orange", "green", "blue"];
+  readonly colors: Array<string>;
   isSelected: boolean;
   dot: HTMLDivElement;
   dotColor: string | null;

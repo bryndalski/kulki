@@ -1,8 +1,9 @@
+import CONFIG from "../config";
 import CoordsInterface from "./Interfaces/CoordsInterface";
 import DotInterface from "./Interfaces/DotInterface";
 
 export default class Dot implements DotInterface {
-  colors: ["orange", "green", "blue"];
+  readonly colors: Array<string>;
   isSelected: boolean;
   dot: HTMLDivElement;
   dotColor: string | null;
@@ -11,7 +12,7 @@ export default class Dot implements DotInterface {
    * @bryndalski
    */
   constructor() {
-    this.colors = ["orange", "green", "blue"];
+    this.colors = CONFIG.colors;
     this.isSelected = false;
     this.dot = document.createElement("div");
     this.dotColor = null;
@@ -24,21 +25,22 @@ export default class Dot implements DotInterface {
    */
   createDot() {
     this.dot.classList.add("game--dot");
-    this.dotColor = this.colors[Math.floor(Math.random() * 3)];
+    this.dotColor =
+      this.colors[Math.floor(Math.random() * CONFIG.colors.length)];
     this.dot.style.backgroundColor = this.dotColor;
     return this.dot;
   }
   /**
    * Removes dot from HTML
    */
-  byeBye = ():void => {
+  byeBye = (): void => {
     this.dot.remove();
   };
 
   /**
    * Adds dot to HTML
    */
-  guessWhoIsBack = ():HTMLDivElement => this.dot;
+  guessWhoIsBack = (): HTMLDivElement => this.dot;
 
   select() {
     if (!this.isSelected) this.dot.classList.add("game--dotBIG");
