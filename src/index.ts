@@ -48,7 +48,7 @@ class Game extends Board implements GameInterface {
    *
    */
   addDots(): void {
-    console.log(this, this.dotMenager);
+    // console.log(this, this.dotMenager);
 
     for (let i: number = 0; i < this.dotNumber; i++) {
       let coords: CoordsInterface = {
@@ -74,7 +74,7 @@ class Game extends Board implements GameInterface {
         i--;
       }
     }
-    console.log(this.dotMenager);
+    // console.log(this.dotMenager);
 
     this.dotMenager.releaseDots();
   }
@@ -86,19 +86,29 @@ class Game extends Board implements GameInterface {
    * @override Bord
    * @param x
    * @param y
+   * //?JEST SPOKO
    */
   tileClickListen = (x: number, y: number): void => {
+    console.log(this.nowSelected);
     if (this.gameArray[x][y].empty && this.nowSelected.isSelected) {
+      this.gameArray[this.nowSelected.getX()][
+        this.nowSelected.getY()
+      ].dot.select();
       this.moveDot(x, y);
       this.nowSelected.clear();
-    }
+    } else if (!this.gameArray[x][y].empty) {
+      console.log(
+        this.nowSelected.isSelected,
+        this.nowSelected.getX(),
+        this.nowSelected.getY()
+      );
 
-    if (!this.gameArray[x][y].empty) {
       if (this.nowSelected.isSelected)
         if (!this.nowSelected.nullCordsCheck())
           this.gameArray[this.nowSelected.getX()][
             this.nowSelected.getY()
           ].dot.select();
+
       this.gameArray[x][y].dot.select();
       this.nowSelected.setNew(true, x, y);
     }
@@ -116,6 +126,7 @@ class Game extends Board implements GameInterface {
     ].dot.byeBye();
     this.gameArray[this.nowSelected.getX()][this.nowSelected.getY()] =
       this.defaultValue;
+
     this.gameArray[x][y] = temporatyBox;
     this.HTMLDivBordArray[x][y].appendChild(
       this.gameArray[x][y].dot.guessWhoIsBack()
