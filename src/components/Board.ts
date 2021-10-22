@@ -4,11 +4,12 @@ import BoardInterface from "./Interfaces/BoardInterface";
 export default class Board implements BoardInterface {
   HTMLDivBordArray: HTMLDivElement[][];
   HTMLContainer: HTMLDivElement;
+  mouseOverEnable: boolean;
 
   constructor(containerTAG: string) {
-    
     this.HTMLDivBordArray = [[]];
     this.HTMLContainer = document.querySelector(containerTAG) as HTMLDivElement;
+    this.mouseOverEnable = false;
   }
   /** Creates path dashbord
    *
@@ -33,9 +34,9 @@ export default class Board implements BoardInterface {
         divCell.addEventListener("click", () => {
           return this.tileClickListen(i, j);
         });
-        //TODO REMOVE ME
-        // divCell.style.color = "white";
-        // divCell.innerText = `${i} x ${j}`;
+        divCell.addEventListener("mouseover", () => {
+          return this.tileMouseOverListener(i, j);
+        });
         divRow.appendChild(divCell);
       }
       this.HTMLContainer.appendChild(divRow);
@@ -48,4 +49,11 @@ export default class Board implements BoardInterface {
    * @param y yCoord
    */
   tileClickListen = (x: number, y: number) => {};
+
+  /**
+   * @override
+   * @param x xCoord
+   * @param y yCoord
+   */
+  tileMouseOverListener = (x: number, y: number) => {};
 }

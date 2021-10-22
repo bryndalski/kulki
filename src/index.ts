@@ -6,6 +6,7 @@ import GameInterface from "./components/Interfaces/GameInterface";
 import SelectedCords from "./components/SelectedCords";
 import DotMenager from "./components/DotMenager";
 import CONFIG from "./config";
+import PathFinder from "./components/PathFinder";
 
 class Game extends Board implements GameInterface {
   gameArray: Array<Array<CellInterface>>;
@@ -13,6 +14,8 @@ class Game extends Board implements GameInterface {
   nowSelected: SelectedCords;
   dotMenager: DotMenager;
   readonly dotNumber: number;
+  pathFinder: PathFinder;
+
   constructor() {
     super(".game--board");
     this.defaultValue = {
@@ -25,7 +28,7 @@ class Game extends Board implements GameInterface {
     this.gameArray = [];
     this.nowSelected = new SelectedCords();
     this.dotMenager = new DotMenager(".dotPreview", this.dotNumber);
-
+    this.pathFinder = new PathFinder(this.HTMLDivBordArray);
     //!!!! TO ZAWSZE OSTATNIE
     this.init();
   }
@@ -40,7 +43,6 @@ class Game extends Board implements GameInterface {
         this.gameArray[i].push(this.defaultValue);
       }
     }
-
     this.addDots();
   }
   /**
@@ -89,28 +91,25 @@ class Game extends Board implements GameInterface {
    * //?JEST SPOKO
    */
   tileClickListen = (x: number, y: number): void => {
-    console.log(this.nowSelected);
     if (this.gameArray[x][y].empty && this.nowSelected.isSelected) {
       this.gameArray[this.nowSelected.getX()][
         this.nowSelected.getY()
       ].dot.select();
+      this.mouseOverEnable = false;
       this.moveDot(x, y);
       this.nowSelected.clear();
     } else if (!this.gameArray[x][y].empty) {
-      console.log(
-        this.nowSelected.isSelected,
-        this.nowSelected.getX(),
-        this.nowSelected.getY()
-      );
-
       if (this.nowSelected.isSelected)
         if (!this.nowSelected.nullCordsCheck())
           this.gameArray[this.nowSelected.getX()][
             this.nowSelected.getY()
           ].dot.select();
 
+      this.mouseOverEnable = true;
       this.gameArray[x][y].dot.select();
       this.nowSelected.setNew(true, x, y);
+      this.pathFinder.setStart(x, y);
+      this.mouseOverEnable = true;
     }
   };
   /**
@@ -132,6 +131,15 @@ class Game extends Board implements GameInterface {
       this.gameArray[x][y].dot.guessWhoIsBack()
     );
   }
+
+  /**
+   * Handle mouse move at each div
+   * @param x
+   * @param y
+   */
+  tileMouseOverListener = (x: number, y: number): void => {
+    if (this.mouseOverEnable) this.pathFinder.findLive(x, y, this.gameArray);
+  };
 }
 
 new Game();
