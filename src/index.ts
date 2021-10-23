@@ -50,8 +50,6 @@ class Game extends Board implements GameInterface {
    *
    */
   addDots(): void {
-    // console.log(this, this.dotMenager);
-
     for (let i: number = 0; i < this.dotNumber; i++) {
       let coords: CoordsInterface = {
         x: Math.floor(Math.random() * 9),
@@ -76,7 +74,6 @@ class Game extends Board implements GameInterface {
         i--;
       }
     }
-    // console.log(this.dotMenager);
 
     this.dotMenager.releaseDots();
   }
@@ -92,23 +89,35 @@ class Game extends Board implements GameInterface {
    */
   tileClickListen = (x: number, y: number): void => {
     if (this.gameArray[x][y].empty && this.nowSelected.isSelected) {
+      // handle move click
       this.gameArray[this.nowSelected.getX()][
         this.nowSelected.getY()
       ].dot.select();
       this.mouseOverEnable = false;
       this.moveDot(x, y);
       this.nowSelected.clear();
+      this.mouseOverEnable = false;
+    } else if (
+      // handle 2X click
+      !this.nowSelected.nullCordsCheck() &&
+      x === this.nowSelected.getX() &&
+      y === this.nowSelected.getY()
+    ) {
+      this.gameArray[this.nowSelected.getX()][
+        this.nowSelected.getY()
+      ].dot.select();
+      this.nowSelected.clear();
+      this.mouseOverEnable = false;
     } else if (!this.gameArray[x][y].empty) {
+      // handle move to hades
       if (this.nowSelected.isSelected)
         if (!this.nowSelected.nullCordsCheck())
           this.gameArray[this.nowSelected.getX()][
             this.nowSelected.getY()
           ].dot.select();
-
-      this.mouseOverEnable = true;
       this.gameArray[x][y].dot.select();
       this.nowSelected.setNew(true, x, y);
-      this.pathFinder.setStart(x, y);
+      this.pathFinder.setStart(x, y, this.gameArray);
       this.mouseOverEnable = true;
     }
   };
@@ -138,7 +147,7 @@ class Game extends Board implements GameInterface {
    * @param y
    */
   tileMouseOverListener = (x: number, y: number): void => {
-    if (this.mouseOverEnable) this.pathFinder.findLive(x, y, this.gameArray);
+    if (this.mouseOverEnable) this.pathFinder.findLive(x, y);
   };
 }
 

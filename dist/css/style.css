@@ -3,10 +3,14 @@
 }
 .game--board {
   display: flex;
-  flex-wrap: wrap;
   width: 468px;
   height: 468px;
   margin: 0 auto;
+  flex-direction: column;
+}
+.game--row {
+  display: flex;
+  flex-direction: row;
 }
 .game--tile {
   width: 50px;

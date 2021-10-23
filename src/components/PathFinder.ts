@@ -12,9 +12,15 @@ export default class PathFinder implements PathFindingINterface {
   findNumber: number;
   constructor(divArray) {
     this.divArray = divArray;
-    this.findNumber = 1;
-    // this.startPoint = ;
+    this.findNumber = 0;
+    this.numberArry = [];
+    this.pathArray = [];
+    this.startPoint = { x: -1, y: -1 };
+    this.endPoint = { x: -1, y: -1 };
+    this.numberArry = [[]];
+    this.clearNumberArray = [[]];
   }
+  clearNumberArray: (String | Number)[][];
   lastArray: string;
 
   /**
@@ -22,9 +28,10 @@ export default class PathFinder implements PathFindingINterface {
    * @param x
    * @param y
    */
-  setStart(x: number, y: number): void {
+  setStart(x: number, y: number, gameArray: Array<Array<CellInterface>>): void {
     this.startPoint.x = x;
     this.startPoint.y = y;
+    this.setFindingArray(gameArray);
     // this.numberArry[x][y] = "START";
   }
 
@@ -36,6 +43,36 @@ export default class PathFinder implements PathFindingINterface {
   setEnd(x: number, y: number): void {
     this.endPoint.x = x;
     this.endPoint.y = y;
+    /**
+     * //TODO DO MNIE JUTRO
+     *
+     * siema mordo mordeczko mordini
+     * ogólnie to sytuacja jest taka że wszystko śmiga ale
+     * musisz naprawić nadpisywanie tablicy
+     * wstępnie plan jest na to że użyjesz tej stringowej ale jest
+     * też 2 plan że tamtą clear też dasz na string
+     * bo ogólnie chodzi o te wskaźniki i wgle
+     *
+     * ogólnie 2 rzecz do przekiny to pięky u wspaniały
+     * start punkt
+     * który musisz nadawać za każdym razem jak zmieniasz sobie punkt
+     * końcowy bo zerujesz tablice
+     *
+     * pomysł jest taki że
+     * → dodajesz  go  start/stop coords bo mozez
+     * → przed nadaniem tamtego mapujesz tą tablice tak że wywalasz ENDY i to jest
+     * cąłkiem spoko ale wyddaje się dziwnie nei działąjące ale wymyśl to jak
+     * będziesz myślał
+     *
+     * to chyba tyle, dodaj te kulki po ruchu to dobry pomysł też
+     *
+     *
+     *
+     *
+     *
+     */
+    console.log(this.clearNumberArray[x]);
+
     this.numberArry[x][y] = "END";
   }
   /**
@@ -43,14 +80,15 @@ export default class PathFinder implements PathFindingINterface {
    * @param gameArray
    */
   setFindingArray(gameArray: Array<Array<CellInterface>>): void {
-    this.numberArry = gameArray.map((e, c) => {
+    this.clearNumberArray = gameArray.map((e, c) => {
       this.pathArray[c] = [];
       return e.map((ie, ic) => {
-        this.pathArray[c][ic] = null;
+        this.pathArray[c][ic] = [];
         return ie.empty ? 0 : "X";
       });
     });
-    this.lastArray = JSON.stringify(this.numberArry);
+    this.numberArry = [...this.clearNumberArray];
+    this.lastArray = JSON.stringify(this.clearNumberArray);
   }
 
   /**
@@ -58,28 +96,17 @@ export default class PathFinder implements PathFindingINterface {
    * @returns Array<[number,number] coordinates array
    */
   findPath(): Array<[number, number]> {
-    /**
-     * Drogi ja któty będziesz czytał to jutro
-     * nie wiem co tu napisałem ale ogólnie działa to tak
-     * że robi ci jebuntnie tablice i dodaje ic coraz większe mniejsze tablice
-     * w których są koordynaty poprzednich współtzędnych
-     *
-     * Powinno działać ale jesli komp zacznie mi
-     * robić spagetti z wykresków to wiedz że zjebałeś
-     * naprawdę nie wiem już co może to być ale to tak
-     *
-     *
-     */
-    this.numerize(this.startPoint.x, this.startPoint.y);
-    while (this.lastArray != JSON.stringify(this.numberArry)) {
-      this.lastArray = JSON.stringify(this.numberArry);
-      for (let c = 0; c < this.numberArry.length; c++) {
-        for (let ic = 0; ic < this.numberArry[c].length; ic++) {
-          if (this.numberArry[c][ic] === this.findNumber)
-            if (this.numerize(c, ic)) return this.pathArray[c][ic];
-        }
-      }
-    }
+    this.numberArry = this.clearNumberArray;
+    this.numerize(this.startPoint.x, this.startPoint.y); //kordynaty wstępne
+    // while (this.lastArray != JSON.stringify(this.numberArry)) {
+    //   this.lastArray = JSON.stringify(this.numberArry);
+    //   for (let c = 0; c < this.numberArry.length; c++) {
+    //     for (let ic = 0; ic < this.numberArry[c].length; ic++) {
+    //       if (this.numberArry[c][ic] === this.findNumber)
+    //         if (this.numerize(c, ic)) return this.pathArray[c][ic];
+    //     }
+    //   }
+    // }
     return [];
   }
   /**
@@ -88,13 +115,12 @@ export default class PathFinder implements PathFindingINterface {
    * @param y
    * @param gameArray
    */
-  findLive(x: number, y: number, gameArray: Array<Array<CellInterface>>) {
-    this.findNumber = 1;
+  findLive(x: number, y: number) {
+    this.findNumber = 0;
     if (x === this.startPoint.x && y === this.startPoint.y) return [];
     else {
-      this.setFindingArray(gameArray);
+      this.numberArry = this.clearNumberArray;
       this.setEnd(x, y);
-      console.log(this.findPath());
     }
   }
 
@@ -108,6 +134,7 @@ export default class PathFinder implements PathFindingINterface {
     try {
       for (let i: number = 0; i < directions.length; i++) {
         let e = directions[i];
+
         if (this.numberArry[x + e.x][y + e.y] == "END") return true;
         else if (this.numberArry[x + e.x][y + e.y] !== null) {
           this.numberArry[x + e.x][y + e.y] = this.findNumber + 1;
@@ -121,6 +148,7 @@ export default class PathFinder implements PathFindingINterface {
       //TODO zakomentuj mnie
       console.log(er);
     }
+
     return false;
   }
 }

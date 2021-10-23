@@ -26,6 +26,7 @@ export default class Board implements BoardInterface {
   protected createContainer(size: number): void {
     for (let i = 0; i < size; i++) {
       let divRow: HTMLDivElement = document.createElement("div");
+      divRow.classList.add("game--row");
       this.HTMLDivBordArray.push([]);
       for (let j = 0; j < size; j++) {
         let divCell: HTMLDivElement = document.createElement("div");
