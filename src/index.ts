@@ -147,7 +147,7 @@ class Game extends Board implements GameInterface {
    * @param y
    */
   tileMouseOverListener = (x: number, y: number): void => {
-    if (this.mouseOverEnable) this.pathFinder.findLive(x, y);
+    if (this.mouseOverEnable) this.pathFinder.findLive(x, y, this.gameArray);
   };
 }
 

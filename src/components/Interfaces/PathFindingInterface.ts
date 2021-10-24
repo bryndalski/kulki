@@ -5,9 +5,8 @@ export default interface PathFindingINterface {
   endPoint: CoordsInterface;
   pathArray: Array<Array<Array<[number, number]> | null>>;
   numberArry: Array<Array<Number | String>>;
-  clearNumberArray: Array<Array<Number | String>>;
-
   divArray: Array<Array<HTMLDivElement>>;
   findNumber: number;
+  STOPLOOP:boolean
   lastArray: string;
 }

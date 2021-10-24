@@ -18,9 +18,9 @@ export default class PathFinder implements PathFindingINterface {
     this.startPoint = { x: -1, y: -1 };
     this.endPoint = { x: -1, y: -1 };
     this.numberArry = [[]];
-    this.clearNumberArray = [[]];
+    this.STOPLOOP = true;
   }
-  clearNumberArray: (String | Number)[][];
+  STOPLOOP: boolean;
   lastArray: string;
 
   /**
@@ -32,7 +32,7 @@ export default class PathFinder implements PathFindingINterface {
     this.startPoint.x = x;
     this.startPoint.y = y;
     this.setFindingArray(gameArray);
-    // this.numberArry[x][y] = "START";
+    this.numberArry[x][y] = "START";
   }
 
   /**
@@ -71,7 +71,6 @@ export default class PathFinder implements PathFindingINterface {
      *
      *
      */
-    console.log(this.clearNumberArray[x]);
 
     this.numberArry[x][y] = "END";
   }
@@ -80,15 +79,14 @@ export default class PathFinder implements PathFindingINterface {
    * @param gameArray
    */
   setFindingArray(gameArray: Array<Array<CellInterface>>): void {
-    this.clearNumberArray = gameArray.map((e, c) => {
+    this.numberArry = gameArray.map((e, c) => {
       this.pathArray[c] = [];
       return e.map((ie, ic) => {
         this.pathArray[c][ic] = [];
         return ie.empty ? 0 : "X";
       });
     });
-    this.numberArry = [...this.clearNumberArray];
-    this.lastArray = JSON.stringify(this.clearNumberArray);
+    this.lastArray = JSON.stringify(this.numberArry);
   }
 
   /**
@@ -96,17 +94,20 @@ export default class PathFinder implements PathFindingINterface {
    * @returns Array<[number,number] coordinates array
    */
   findPath(): Array<[number, number]> {
-    this.numberArry = this.clearNumberArray;
+    this.STOPLOOP = true;
     this.numerize(this.startPoint.x, this.startPoint.y); //kordynaty wstępne
-    // while (this.lastArray != JSON.stringify(this.numberArry)) {
-    //   this.lastArray = JSON.stringify(this.numberArry);
-    //   for (let c = 0; c < this.numberArry.length; c++) {
-    //     for (let ic = 0; ic < this.numberArry[c].length; ic++) {
-    //       if (this.numberArry[c][ic] === this.findNumber)
-    //         if (this.numerize(c, ic)) return this.pathArray[c][ic];
-    //     }
-    //   }
-    // }
+    while (this.lastArray != JSON.stringify(this.numberArry) && this.STOPLOOP) {
+      this.lastArray = JSON.stringify(this.numberArry);
+      console.log("==========Numerowaaaaaaaa===========");
+      console.table(this.numberArry);
+      console.log("====================================");
+      for (let c = 0; c < this.numberArry.length; c++) {
+        for (let ic = 0; ic < this.numberArry[c].length; ic++) {
+          if (this.numberArry[c][ic] === this.findNumber)
+            if (this.numerize(c, ic)) return this.pathArray[c][ic];
+        }
+      }
+    }
     return [];
   }
   /**
@@ -115,12 +116,17 @@ export default class PathFinder implements PathFindingINterface {
    * @param y
    * @param gameArray
    */
-  findLive(x: number, y: number) {
+  findLive(x: number, y: number, gameArray: Array<Array<CellInterface>>) {
+    this.setStart(this.startPoint.x, this.startPoint.y, gameArray);
     this.findNumber = 0;
     if (x === this.startPoint.x && y === this.startPoint.y) return [];
     else {
-      this.numberArry = this.clearNumberArray;
       this.setEnd(x, y);
+      console.log("====================================");
+      console.log(this.numberArry);
+      console.log("====================================");
+      this.STOPLOOP = false;
+      this.findPath();
     }
   }
 
@@ -134,7 +140,6 @@ export default class PathFinder implements PathFindingINterface {
     try {
       for (let i: number = 0; i < directions.length; i++) {
         let e = directions[i];
-
         if (this.numberArry[x + e.x][y + e.y] == "END") return true;
         else if (this.numberArry[x + e.x][y + e.y] !== null) {
           this.numberArry[x + e.x][y + e.y] = this.findNumber + 1;
@@ -148,7 +153,7 @@ export default class PathFinder implements PathFindingINterface {
       //TODO zakomentuj mnie
       console.log(er);
     }
-
+    this.findNumber++;
     return false;
   }
 }
