@@ -7,6 +7,6 @@ export default interface PathFindingINterface {
   numberArry: Array<Array<Number | String>>;
   divArray: Array<Array<HTMLDivElement>>;
   findNumber: number;
-  STOPLOOP:boolean
+  lastNumberToFind: number;
   lastArray: string;
 }
