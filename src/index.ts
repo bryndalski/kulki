@@ -139,6 +139,7 @@ class Game extends Board implements GameInterface {
     this.HTMLDivBordArray[x][y].appendChild(
       this.gameArray[x][y].dot.guessWhoIsBack()
     );
+    this.pathFinder.stopFinding();
   }
 
   /**
@@ -147,7 +148,10 @@ class Game extends Board implements GameInterface {
    * @param y
    */
   tileMouseOverListener = (x: number, y: number): void => {
-    if (this.mouseOverEnable) this.pathFinder.findLive(x, y, this.gameArray);
+    if (this.mouseOverEnable) {
+      this.pathFinder.stopFinding();
+      this.pathFinder.findLive(x, y, this.gameArray);
+    }
   };
 }
 

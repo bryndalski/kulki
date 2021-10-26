@@ -19,9 +19,11 @@ export default class PathFinder implements PathFindingINterface {
     this.endPoint = { x: -1, y: -1 };
     this.numberArry = [[]];
     this.lastNumberToFind = 1;
+    this.canSearch = true;
   }
   lastNumberToFind: number;
   lastArray: string;
+  canSearch: boolean;
 
   /**
    * Set path finding start algoritm
@@ -94,9 +96,14 @@ export default class PathFinder implements PathFindingINterface {
    * @returns Array<[number,number] coordinates array
    */
   findPath(): Array<[number, number]> {
-    console.log(this.numerize(this.startPoint.x, this.startPoint.y)); //kordynaty wstępne
-    while (this.lastNumberToFind != this.findNumber) {
-      this.findNumber++;
+    if (this.numerize(this.startPoint.x, this.startPoint.y)) return []; //kordynaty wstępne
+    console.table(this.numberArry);
+
+    while (this.canSearch) {
+      console.clear();
+      this.findNumber = this.findNumber + 1;
+      console.table(this.numberArry);
+      console.log(this.findNumber);
 
       for (let c = 0; c < this.numberArry.length; c++) {
         for (let ic = 0; ic < this.numberArry[c].length; ic++) {
@@ -104,17 +111,19 @@ export default class PathFinder implements PathFindingINterface {
             if (this.numerize(c, ic)) return this.pathArray[c][ic];
         }
       }
-      console.log("number" + this.findNumber);
-      if (JSON.stringify(this.numberArry) !== this.lastArray)
+      if (JSON.stringify(this.numberArry) != this.lastArray) {
         this.lastArray = JSON.stringify(this.numberArry);
-      else break;
+      } else break;
     }
     // console.log("===nastpęny while i tablica==");
     // console.table(this.numberArry);
-    // console.log(JSON.stringify(this.numberArry) !== this.lastArray);
+
     // console.log("================");
 
     return [];
+  }
+  stopFinding() {
+    this.canSearch = false;
   }
   /**
    * Handles live path finding with returns etc
@@ -123,29 +132,35 @@ export default class PathFinder implements PathFindingINterface {
    * @param gameArray
    */
   findLive(x: number, y: number, gameArray: Array<Array<CellInterface>>) {
+    console.log("a ja to co  ?");
+
     this.setStart(this.startPoint.x, this.startPoint.y, gameArray);
     this.findNumber = 0;
     if (x === this.startPoint.x && y === this.startPoint.y) return [];
     else {
       this.setEnd(x, y);
       console.log("==========Znaleziona ścieżka========");
+      this.canSearch = true;
       console.log(this.findPath());
       console.log("====================================");
     }
   }
 
   numerize(x: number, y: number): boolean {
+    console.log(x, y);
+
     const directions = [
       { x: -1, y: 0 }, //jeden w góre
       { x: 0, y: -1 }, //jeden w lewo
       { x: 0, y: 1 }, // jeden w prawo
       { x: 1, y: 0 }, //jeden w dół
     ];
-    try {
-      for (let i: number = 0; i < directions.length; i++) {
+    for (let i: number = 0; i < directions.length; i++) {
+      try {
         let e = directions[i];
-        // console.log(this.findNumber, e);
-
+        console.log("====================================");
+        console.log(this.numberArry[x + e.x][y + e.y], e);
+        console.log("====================================");
         if (this.numberArry[x + e.x][y + e.y] == "END") return true;
         else if (this.numberArry[x + e.x][y + e.y] === 0) {
           this.numberArry[x + e.x][y + e.y] = this.findNumber + 1;
@@ -154,11 +169,12 @@ export default class PathFinder implements PathFindingINterface {
             [x + e.x, y + e.y],
           ];
         }
+      } catch (er) {
+        //TODO zakomentuj mnie
+        console.log(er);
       }
-    } catch (er) {
-      //TODO zakomentuj mnie
-      console.log(er);
     }
+
     return false;
   }
 }
