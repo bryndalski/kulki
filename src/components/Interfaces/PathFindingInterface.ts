@@ -9,4 +9,7 @@ export default interface PathFindingINterface {
   findNumber: number;
   lastNumberToFind: number;
   lastArray: string;
+  canSearch: boolean;
+  divesToDraw: Array<[number, number]>;
+  dotColor: string;
 }

@@ -35,7 +35,7 @@ class Game extends Board implements GameInterface {
   /**
    * Inits whole class
    */
-  init() {
+  init(): void {
     this.createContainer(9);
     for (let i: number = 0; i < 9; i++) {
       this.gameArray[i] = [];
@@ -85,7 +85,6 @@ class Game extends Board implements GameInterface {
    * @override Bord
    * @param x
    * @param y
-   * //?JEST SPOKO
    */
   tileClickListen = (x: number, y: number): void => {
     if (this.gameArray[x][y].empty && this.nowSelected.isSelected) {
@@ -117,6 +116,7 @@ class Game extends Board implements GameInterface {
           ].dot.select();
       this.gameArray[x][y].dot.select();
       this.nowSelected.setNew(true, x, y);
+      this.pathFinder.setColor(this.gameArray[x][y].color);
       this.pathFinder.setStart(x, y, this.gameArray);
       this.mouseOverEnable = true;
     }
@@ -140,6 +140,7 @@ class Game extends Board implements GameInterface {
       this.gameArray[x][y].dot.guessWhoIsBack()
     );
     this.pathFinder.stopFinding();
+    this.pathFinder.darkColorize();
   }
 
   /**
@@ -150,7 +151,9 @@ class Game extends Board implements GameInterface {
   tileMouseOverListener = (x: number, y: number): void => {
     if (this.mouseOverEnable) {
       this.pathFinder.stopFinding();
-      this.pathFinder.findLive(x, y, this.gameArray);
+      this.pathFinder.decolorize();
+      if (this.gameArray[x][y].empty)
+        this.pathFinder.findLive(x, y, this.gameArray);
     }
   };
 }

@@ -1,6 +1,7 @@
 import CoordsInterface from "./Interfaces/CoordsInterface";
 import PathFindingINterface from "./Interfaces/PathFindingInterface";
 import CellInterface from "./Interfaces/CellInterface";
+import CONFIG from "../config";
 
 export default class PathFinder implements PathFindingINterface {
   startPoint: CoordsInterface;
@@ -8,8 +9,13 @@ export default class PathFinder implements PathFindingINterface {
   numberArry: (String | Number)[][];
   divArray: HTMLDivElement[][];
   pathArray: [number, number][][][];
-
+  lastNumberToFind: number;
+  lastArray: string;
+  canSearch: boolean;
   findNumber: number;
+  divesToDraw: [number, number][];
+  dotColor: string;
+
   constructor(divArray) {
     this.divArray = divArray;
     this.findNumber = 0;
@@ -20,10 +26,9 @@ export default class PathFinder implements PathFindingINterface {
     this.numberArry = [[]];
     this.lastNumberToFind = 1;
     this.canSearch = true;
+    this.divesToDraw = [];
+    this.dotColor = "";
   }
-  lastNumberToFind: number;
-  lastArray: string;
-  canSearch: boolean;
 
   /**
    * Set path finding start algoritm
@@ -36,6 +41,14 @@ export default class PathFinder implements PathFindingINterface {
     this.setFindingArray(gameArray);
     this.numberArry[x][y] = "START";
   }
+  /**
+   * Set dot color
+   * @param color strign color
+   */
+  setColor(color: string): void {
+    this.dotColor = color;
+    console.log(this.dotColor);
+  }
 
   /**
    * Set path finding stop algoritm
@@ -45,35 +58,6 @@ export default class PathFinder implements PathFindingINterface {
   setEnd(x: number, y: number): void {
     this.endPoint.x = x;
     this.endPoint.y = y;
-    /**
-     * //TODO DO MNIE JUTRO
-     *
-     * siema mordo mordeczko mordini
-     * ogólnie to sytuacja jest taka że wszystko śmiga ale
-     * musisz naprawić nadpisywanie tablicy
-     * wstępnie plan jest na to że użyjesz tej stringowej ale jest
-     * też 2 plan że tamtą clear też dasz na string
-     * bo ogólnie chodzi o te wskaźniki i wgle
-     *
-     * ogólnie 2 rzecz do przekiny to pięky u wspaniały
-     * start punkt
-     * który musisz nadawać za każdym razem jak zmieniasz sobie punkt
-     * końcowy bo zerujesz tablice
-     *
-     * pomysł jest taki że
-     * → dodajesz  go  start/stop coords bo mozez
-     * → przed nadaniem tamtego mapujesz tą tablice tak że wywalasz ENDY i to jest
-     * cąłkiem spoko ale wyddaje się dziwnie nei działąjące ale wymyśl to jak
-     * będziesz myślał
-     *
-     * to chyba tyle, dodaj te kulki po ruchu to dobry pomysł też
-     *
-     *
-     *
-     *
-     *
-     */
-
     this.numberArry[x][y] = "END";
   }
   /**
@@ -92,19 +76,14 @@ export default class PathFinder implements PathFindingINterface {
   }
 
   /**
-   * Finds path from A to B
-   * @returns Array<[number,number] coordinates array
+   * @function
+   * @description Finds path from A to B
+   * @returns Array<[number,number]> coordinates array
    */
   findPath(): Array<[number, number]> {
-    if (this.numerize(this.startPoint.x, this.startPoint.y)) return []; //kordynaty wstępne
-    console.table(this.numberArry);
-
+    if (this.numerize(this.startPoint.x, this.startPoint.y)) return [];
     while (this.canSearch) {
-      console.clear();
       this.findNumber = this.findNumber + 1;
-      console.table(this.numberArry);
-      console.log(this.findNumber);
-
       for (let c = 0; c < this.numberArry.length; c++) {
         for (let ic = 0; ic < this.numberArry[c].length; ic++) {
           if (this.numberArry[c][ic] === this.findNumber)
@@ -115,13 +94,11 @@ export default class PathFinder implements PathFindingINterface {
         this.lastArray = JSON.stringify(this.numberArry);
       } else break;
     }
-    // console.log("===nastpęny while i tablica==");
-    // console.table(this.numberArry);
-
-    // console.log("================");
-
     return [];
   }
+  /**
+   * @description Changes search availibility to disable
+   */
   stopFinding() {
     this.canSearch = false;
   }
@@ -132,23 +109,32 @@ export default class PathFinder implements PathFindingINterface {
    * @param gameArray
    */
   findLive(x: number, y: number, gameArray: Array<Array<CellInterface>>) {
-    console.log("a ja to co  ?");
-
     this.setStart(this.startPoint.x, this.startPoint.y, gameArray);
     this.findNumber = 0;
     if (x === this.startPoint.x && y === this.startPoint.y) return [];
     else {
       this.setEnd(x, y);
-      console.log("==========Znaleziona ścieżka========");
       this.canSearch = true;
-      console.log(this.findPath());
-      console.log("====================================");
+      this.colorize(this.findPath());
     }
   }
-
+  /**
+   * @function
+   * @param x number  coords of x
+   * @param y number
+   * @returns boolean
+   * @description assigns number to all near by coords
+   *
+   * @example for cords (3,2) and number 3 assigns :
+   *  - for point x:2 y:2 - 4
+   *  - for point x:3 y:1 - 4
+   *  - for point x:3 y:3 - 4
+   *  - for point x:4 y:2 - 4
+   * if one of them is marked as "END" returns true
+   * else returns false
+   *
+   */
   numerize(x: number, y: number): boolean {
-    console.log(x, y);
-
     const directions = [
       { x: -1, y: 0 }, //jeden w góre
       { x: 0, y: -1 }, //jeden w lewo
@@ -158,9 +144,6 @@ export default class PathFinder implements PathFindingINterface {
     for (let i: number = 0; i < directions.length; i++) {
       try {
         let e = directions[i];
-        console.log("====================================");
-        console.log(this.numberArry[x + e.x][y + e.y], e);
-        console.log("====================================");
         if (this.numberArry[x + e.x][y + e.y] == "END") return true;
         else if (this.numberArry[x + e.x][y + e.y] === 0) {
           this.numberArry[x + e.x][y + e.y] = this.findNumber + 1;
@@ -171,10 +154,58 @@ export default class PathFinder implements PathFindingINterface {
         }
       } catch (er) {
         //TODO zakomentuj mnie
-        console.log(er);
       }
     }
 
     return false;
+  }
+  /**
+   * Assign activeTile class to all found div
+   * @function
+   * @param coordsArray
+   * @description Paints path from A to B using div array and aclass `game-title-active`
+   */
+  colorize(coordsArray: Array<[number, number]>): void {
+    this.divesToDraw = [
+      ...coordsArray,
+      [this.startPoint.x, this.startPoint.y],
+      [this.endPoint.x, this.endPoint.y],
+    ];
+
+    this.divesToDraw.forEach((e) => {
+      this.divArray[e[0]][e[1]].style.backgroundColor = this.convertColor(
+        this.dotColor,
+        CONFIG.trackOpacity
+      );
+      this.divArray[e[0]][e[1]].style.borderColor = this.dotColor;
+    });
+  }
+  /**
+   * Removes unused colors
+   */
+  decolorize() {
+    this.divesToDraw.forEach((e) => {
+      this.divArray[e[0]][e[1]].style.borderColor = "";
+      this.divArray[e[0]][e[1]].style.background = "";
+    });
+  }
+  /**
+   * Creates colors for used path
+   */
+  darkColorize() {
+    this.decolorize();
+    this.divesToDraw.forEach((e) => {
+      this.divArray[e[0]][e[1]].style.backgroundColor = this.convertColor(
+        this.dotColor,
+        CONFIG.usedTrackOpacity
+      );
+      this.divArray[e[0]][e[1]].style.borderColor = CONFIG.borderColor;
+    });
+  }
+
+  convertColor(color: string, opacity: number): string {
+    let colorArray = color.split(",");
+    colorArray[3] = `${opacity})`;
+    return colorArray.join(",");
   }
 }
