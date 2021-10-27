@@ -1,12 +1,14 @@
 import Dot from "./Dot";
 import BoardInterface from "./Interfaces/BoardInterface";
+import ScoreMenager from "./ScoreMenager";
 
-export default class Board implements BoardInterface {
+export default class Board extends ScoreMenager implements BoardInterface {
   HTMLDivBordArray: HTMLDivElement[][];
   HTMLContainer: HTMLDivElement;
   mouseOverEnable: boolean;
 
   constructor(containerTAG: string) {
+    super();
     this.HTMLDivBordArray = [[]];
     this.HTMLContainer = document.querySelector(containerTAG) as HTMLDivElement;
     this.mouseOverEnable = false;

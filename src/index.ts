@@ -76,6 +76,7 @@ class Game extends Board implements GameInterface {
     }
 
     this.dotMenager.releaseDots();
+    this.findToDestroy(this.gameArray);
   }
   /**
    * Handles hod clicking
@@ -93,7 +94,8 @@ class Game extends Board implements GameInterface {
         this.nowSelected.getY()
       ].dot.select();
       this.mouseOverEnable = false;
-      this.moveDot(x, y);
+      if (this.pathFinder.canBeMoved) this.moveDot(x, y);
+      else this.pathFinder.decolorize();
       this.nowSelected.clear();
       this.mouseOverEnable = false;
     } else if (
@@ -141,6 +143,7 @@ class Game extends Board implements GameInterface {
     );
     this.pathFinder.stopFinding();
     this.pathFinder.darkColorize();
+    this.findToDestroy(this.gameArray);
   }
 
   /**

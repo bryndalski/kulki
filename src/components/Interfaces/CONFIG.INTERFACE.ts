@@ -4,4 +4,6 @@ export default interface CONFIGINTERFACE {
   trackOpacity: number;
   usedTrackOpacity: number;
   borderColor: string;
+  destroyNumber: number;
+  size: number;
 }

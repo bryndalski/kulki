@@ -2,6 +2,7 @@ import CoordsInterface from "./Interfaces/CoordsInterface";
 import PathFindingINterface from "./Interfaces/PathFindingInterface";
 import CellInterface from "./Interfaces/CellInterface";
 import CONFIG from "../config";
+import { logger } from "./decorators";
 
 export default class PathFinder implements PathFindingINterface {
   startPoint: CoordsInterface;
@@ -15,7 +16,7 @@ export default class PathFinder implements PathFindingINterface {
   findNumber: number;
   divesToDraw: [number, number][];
   dotColor: string;
-
+  canBeMoved: boolean;
   constructor(divArray) {
     this.divArray = divArray;
     this.findNumber = 0;
@@ -28,6 +29,7 @@ export default class PathFinder implements PathFindingINterface {
     this.canSearch = true;
     this.divesToDraw = [];
     this.dotColor = "";
+    this.canBeMoved = false;
   }
 
   /**
@@ -80,21 +82,30 @@ export default class PathFinder implements PathFindingINterface {
    * @description Finds path from A to B
    * @returns Array<[number,number]> coordinates array
    */
+  //TODO elegancko jest dekorator
+  @logger
   findPath(): Array<[number, number]> {
-    if (this.numerize(this.startPoint.x, this.startPoint.y)) return [];
+    if (this.numerize(this.startPoint.x, this.startPoint.y)) {
+      this.canBeMoved = true;
+      return [];
+    }
     while (this.canSearch) {
       this.findNumber = this.findNumber + 1;
       for (let c = 0; c < this.numberArry.length; c++) {
         for (let ic = 0; ic < this.numberArry[c].length; ic++) {
           if (this.numberArry[c][ic] === this.findNumber)
-            if (this.numerize(c, ic)) return this.pathArray[c][ic];
+            if (this.numerize(c, ic)) {
+              this.canBeMoved = true;
+              return this.pathArray[c][ic];
+            }
         }
       }
       if (JSON.stringify(this.numberArry) != this.lastArray) {
         this.lastArray = JSON.stringify(this.numberArry);
       } else break;
     }
-    return [];
+    this.canBeMoved = false;
+    return null;
   }
   /**
    * @description Changes search availibility to disable
@@ -134,6 +145,7 @@ export default class PathFinder implements PathFindingINterface {
    * else returns false
    *
    */
+
   numerize(x: number, y: number): boolean {
     const directions = [
       { x: -1, y: 0 }, //jeden w góre
@@ -166,11 +178,13 @@ export default class PathFinder implements PathFindingINterface {
    * @description Paints path from A to B using div array and aclass `game-title-active`
    */
   colorize(coordsArray: Array<[number, number]>): void {
-    this.divesToDraw = [
-      ...coordsArray,
-      [this.startPoint.x, this.startPoint.y],
-      [this.endPoint.x, this.endPoint.y],
-    ];
+    if (coordsArray !== null)
+      this.divesToDraw = [
+        ...coordsArray,
+        [this.startPoint.x, this.startPoint.y],
+        [this.endPoint.x, this.endPoint.y],
+      ];
+    else this.divesToDraw = [[this.startPoint.x, this.startPoint.y]];
 
     this.divesToDraw.forEach((e) => {
       this.divArray[e[0]][e[1]].style.backgroundColor = this.convertColor(

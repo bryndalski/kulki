@@ -10,9 +10,11 @@ const CONFIG: CONFIGINTERFACE = {
     "rgba(0, 255, 242, 1)",
     "rgba(229, 255, 0, 1)",
   ],
-  dotNumber: 10,
+  dotNumber: 8,
   trackOpacity: 0.3,
-  usedTrackOpacity: 0.2,
+  usedTrackOpacity: 0.1,
   borderColor: "orange",
+  destroyNumber: 2,
+  size: 10,
 };
 export default CONFIG;

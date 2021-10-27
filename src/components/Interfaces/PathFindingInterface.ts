@@ -12,4 +12,5 @@ export default interface PathFindingINterface {
   canSearch: boolean;
   divesToDraw: Array<[number, number]>;
   dotColor: string;
+  canBeMoved: boolean;
 }
