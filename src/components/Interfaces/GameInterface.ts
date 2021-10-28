@@ -5,7 +5,7 @@ import PathFinder from "../PathFinder";
 
 export default interface GameInterface {
   gameArray: Array<Array<CellInterface>>;
-  defaultValue: CellInterface;
+  readonly defaultValue: CellInterface;
   nowSelected: SelectedCords;
   dotMenager: DotMenager;
   pathFinder: PathFinder;

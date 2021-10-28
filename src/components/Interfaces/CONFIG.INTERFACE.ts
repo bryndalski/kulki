@@ -6,4 +6,6 @@ export default interface CONFIGINTERFACE {
   borderColor: string;
   destroyNumber: number;
   size: number;
+  unmarkedColor: string;
+  markedColor: string;
 }

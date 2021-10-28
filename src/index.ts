@@ -76,7 +76,7 @@ class Game extends Board implements GameInterface {
     }
 
     this.dotMenager.releaseDots();
-    this.findToDestroy(this.gameArray);
+    this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
   }
   /**
    * Handles hod clicking
@@ -143,7 +143,7 @@ class Game extends Board implements GameInterface {
     );
     this.pathFinder.stopFinding();
     this.pathFinder.darkColorize();
-    this.findToDestroy(this.gameArray);
+    this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
   }
 
   /**
@@ -155,10 +155,24 @@ class Game extends Board implements GameInterface {
     if (this.mouseOverEnable) {
       this.pathFinder.stopFinding();
       this.pathFinder.decolorize();
-      if (this.gameArray[x][y].empty)
+      if (this.gameArray[x][y].empty) {
+        this.mark(false);
         this.pathFinder.findLive(x, y, this.gameArray);
+      }
     }
   };
+
+  /**
+   * @description removes dots from game array and game
+   */
+  OMGTheyKilledKenny(destroyArray: Array<[number, number]>) {
+    destroyArray.forEach((e) => {
+      console.log(e);
+      this.gameArray[e[0]][e[1]].dot.byeBye();
+      this.gameArray[e[0]][e[1]] = this.defaultValue;
+    });
+    this.mark(true);
+  }
 }
 
 new Game();

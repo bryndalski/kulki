@@ -44,6 +44,7 @@ export default class Board extends ScoreMenager implements BoardInterface {
       }
       this.HTMLContainer.appendChild(divRow);
     }
+    this.setDivArray(this.HTMLDivBordArray);
   }
 
   /**

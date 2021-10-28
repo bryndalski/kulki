@@ -7,6 +7,8 @@
     height: 468px;
     margin: 0 auto;
     flex-direction: column;
+    margin-top: 30px;
+    margin-bottom: 30px;
   }
   &--row {
     display: flex;
@@ -57,4 +59,14 @@ body {
   padding: 0;
   height: 100vh;
   width: 100vw;
+  overflow: hidden;
+}
+
+.dotPreview {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  width: 100vw;
+  height: auto;
 }
