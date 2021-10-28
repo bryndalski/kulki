@@ -10,7 +10,7 @@ const CONFIG: CONFIGINTERFACE = {
     "rgba(255, 51, 153, 1)",
     "rgba(255, 128, 0, 1)",
   ],
-  dotNumber: 36,
+  dotNumber: 35,
   trackOpacity: 0.4,
   usedTrackOpacity: 0.3,
   borderColor: "orange",

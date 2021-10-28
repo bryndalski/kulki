@@ -19,3 +19,23 @@ export function indexInit(constructor: Function) {
 
   console.log(constructor);
 }
+
+/**
+ *
+ * @todo
+ * @description Adds container to set method one of 2 required decortors
+ * @param ob
+ * @param name
+ * @param desc
+ */
+export function setContainer(
+  ob: Object,
+  name: string,
+  desc: PropertyDescriptor
+) {
+  let oryg = desc.value;
+  desc.value = function (...args: any[]) {
+    this.container = document.querySelector(".score") as HTMLElement;
+    return oryg.apply(this, args);
+  };
+}

@@ -12,12 +12,14 @@ export default class DotMenager implements DotMenagerInterface {
     this.dotArray = [];
     this.dotsNumber = dotsNumber;
   }
-
+  //TODO przed sprawdzeniem daj do sprawdzenia
   /**
    * Allows to add specyfic dot number
    * @param dotNumber
    */
   addDots(): void {
+    this.dotArray = [];
+    this.dotPreviewContainer.innerHTML = "";
     for (let i: number = 0; i < this.dotsNumber; i++) {
       let dot: Dot = new Dot();
       this.dotArray.push(dot);
@@ -25,10 +27,8 @@ export default class DotMenager implements DotMenagerInterface {
     }
   }
 
-  releaseDots(): void {
+  releaseDots(): Array<Dot> {
     this.dotArray.forEach((e) => e.byeBye());
-    this.addDots();
+    return this.dotArray;
   }
-
-  renderDot() {}
 }

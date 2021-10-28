@@ -1,12 +1,15 @@
 import CellInterface from "./Interfaces/CellInterface";
 import ScoreMenagerInterface from "./Interfaces/ScoreMenagerInterface";
 import CONFIG from "../config";
+import CoordsInterface from "./Interfaces/CoordsInterface";
+import { setContainer } from "./decorators";
+
 export default class ScoreMenager implements ScoreMenagerInterface {
   score: number;
   gameArray: CellInterface[][];
   destroyedDotsArray: Array<[number, number]>;
   HTMLDivArray: Array<Array<HTMLDivElement>>;
-
+  container: HTMLElement;
   constructor() {
     this.score = 0;
     this.destroyedDotsArray = [];
@@ -16,7 +19,7 @@ export default class ScoreMenager implements ScoreMenagerInterface {
    * Set div array
    * @param HTMLDivBordArray
    */
-  setDivArray = (HTMLDivBordArray: Array<Array<HTMLDivElement>>) =>
+  protected setDivArray = (HTMLDivBordArray: Array<Array<HTMLDivElement>>) =>
     (this.HTMLDivArray = HTMLDivBordArray);
 
   public findToDestroy(
@@ -29,11 +32,10 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     //do zabcia
     this.destroyedDotsArray = [...new Set(this.destroyedDotsArray)];
     //TODO fix me
-    this.score += this.destroyedDotsArray.length;
-
+    this.setScore(this.destroyedDotsArray.length);
     return this.destroyedDotsArray;
   }
-  /**
+  /**this.scor
    *
    * @param destroyArray
    * @param direcion <0,1>
@@ -47,7 +49,7 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     destroyArray: Array<Array<string | null>>,
     direction: boolean
   ): Array<[number, number]> {
-    console.clear();
+    // console.clear();
     // console.table(destroyArray);
     let coordsToDestroy = [];
     for (let y: number = 0; y < CONFIG.size; y++) {
@@ -85,12 +87,56 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     }
     return coordsToDestroy;
   }
+  // /**
+  //  *
+  //  * @param destroyArray
+  //  * @description Marks all dots to destroy from game from left 0,0 to right bottom
+  //  */
+  // private mapToKillButSlant(destroyArray: Array<Array<string | null>>) {
+  //   let coordsToDestroy = [];
+
+  //   for (let l: number; l < destroyArray.length; l++) {
+  //     let lastColor: string = "";
+  //     let temporatyCoordsArray: Array<[number, number]> = [];
+  //     for (let x: number = l; l >= 0; l--) {
+  //       let f: string | null = destroyArray[l][l];
+  //       if (typeof f == "string" && (lastColor === null || lastColor == f)) {
+  //         // if color is null or has not changed
+  //         lastColor = f;
+  //         temporatyCoordsArray.push([l, l]);
+  //       } else if (
+  //         typeof f == "string" &&
+  //         lastColor !== null &&
+  //         lastColor != f
+  //       ) {
+  //         if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+  //           coordsToDestroy.push(...temporatyCoordsArray);
+  //         }
+  //         lastColor = f;
+  //         temporatyCoordsArray = [[l,l]];
+  //       } else {
+  //         if (temporatyCoordsArray.length != 0)
+  //           if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+  //             coordsToDestroy.push(...temporatyCoordsArray);
+  //           }
+  //         lastColor = null;
+  //         temporatyCoordsArray = [];
+  //       }
+  //     }
+  //     if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+  //       coordsToDestroy.push(...temporatyCoordsArray);
+  //     }
+  //   }
+  //   return coordsToDestroy;
+  // }
 
   /**
    *
-   * @param mark marks or unmarks destroyed dots
+   * @param mark true - marks false -unmarks
+   * @description
+   *
    */
-  mark(mark: boolean) {
+  public mark(mark: boolean) {
     this.destroyedDotsArray.forEach((e) => {
       this.HTMLDivArray[e[0]][e[1]].style.backgroundColor = mark
         ? CONFIG.markedColor
@@ -99,5 +145,45 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     if (!mark) this.destroyedDotsArray = [];
   }
 
-  setScore() {}
+  public winable(
+    gameArray: Array<Array<CellInterface>>
+  ): Array<CoordsInterface> {
+    let coordsToFindArray: Array<CoordsInterface> = [];
+    gameArray.forEach((e, x) =>
+      e.forEach((ie, y) => {
+        if (ie.empty) coordsToFindArray.push({ x, y });
+      })
+    );
+    return coordsToFindArray;
+  }
+
+  /**
+   *
+   * @param score
+   */
+  @setContainer
+  private setScore(score: number): void {
+    this.score += score;
+    this.container.innerText = `Twój wynik to ${this.score}`;
+  }
+  /**
+   * @description hehe thanos
+   * @param gameArray
+   */
+  public endGame(gameArray: Array<Array<CellInterface>>) {
+    alert(`your score is: ${this.score}`);
+    alert("I'm Inavitable");
+    alert("*snaps*");
+    let pastaLaVista = [];
+    gameArray.forEach((e, c) =>
+      e.forEach((x, sc) => {
+        if (c % 2 == 0 ? sc % 2 == 0 : sc % 2 == 1)
+          if (!x.empty) pastaLaVista.push(x);
+      })
+    );
+    pastaLaVista.forEach((e) => e.dot.byeBye());
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  }
 }

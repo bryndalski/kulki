@@ -7,7 +7,6 @@ import SelectedCords from "./components/SelectedCords";
 import DotMenager from "./components/DotMenager";
 import CONFIG from "./config";
 import PathFinder from "./components/PathFinder";
-
 class Game extends Board implements GameInterface {
   gameArray: Array<Array<CellInterface>>;
   defaultValue: CellInterface;
@@ -35,7 +34,7 @@ class Game extends Board implements GameInterface {
   /**
    * Inits whole class
    */
-  init(): void {
+  private init(): void {
     this.createContainer(9);
     for (let i: number = 0; i < 9; i++) {
       this.gameArray[i] = [];
@@ -43,6 +42,8 @@ class Game extends Board implements GameInterface {
         this.gameArray[i].push(this.defaultValue);
       }
     }
+    this.dotMenager.addDots();
+
     this.addDots();
   }
   /**
@@ -50,33 +51,27 @@ class Game extends Board implements GameInterface {
    *
    */
   addDots(): void {
-    for (let i: number = 0; i < this.dotNumber; i++) {
-      let coords: CoordsInterface = {
-        x: Math.floor(Math.random() * 9),
-        y: Math.floor(Math.random() * 9),
-      };
-      if (this.gameArray[coords.x][coords.y].empty) {
-        let dot: Dot =
-          this.dotMenager.dotArray.length === 0
-            ? new Dot()
-            : this.dotMenager.dotArray[i];
-        if (this.dotMenager.dotArray.length === 0) dot.createDot();
-        this.HTMLDivBordArray[coords.x][coords.y].appendChild(
-          dot.guessWhoIsBack()
+    let possibleCoords: Array<CoordsInterface> = this.winable(this.gameArray);
+    if (possibleCoords.length >= CONFIG.dotNumber) {
+      this.dotMenager.releaseDots().forEach((e: Dot) => {
+        let coordNumber: number = Math.floor(
+          Math.random() * possibleCoords.length
         );
-
-        this.gameArray[coords.x][coords.y] = {
+        this.gameArray[possibleCoords[coordNumber].x][
+          possibleCoords[coordNumber].y
+        ] = {
           empty: false,
-          color: dot.dotColor,
-          dot,
+          color: e.dotColor,
+          dot: e,
         };
-      } else {
-        i--;
-      }
-    }
-
-    this.dotMenager.releaseDots();
-    this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
+        this.HTMLDivBordArray[possibleCoords[coordNumber].x][
+          possibleCoords[coordNumber].y
+        ].appendChild(e.guessWhoIsBack());
+        possibleCoords.splice(coordNumber, 1);
+      });
+      this.dotMenager.addDots();
+      this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
+    } else this.endGame(this.gameArray);
   }
   /**
    * Handles hod clicking
@@ -143,6 +138,7 @@ class Game extends Board implements GameInterface {
     );
     this.pathFinder.stopFinding();
     this.pathFinder.darkColorize();
+    this.addDots();
     this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
   }
 
@@ -166,12 +162,18 @@ class Game extends Board implements GameInterface {
    * @description removes dots from game array and game
    */
   OMGTheyKilledKenny(destroyArray: Array<[number, number]>) {
-    console.log(destroyArray);
-
     destroyArray.forEach((e) => {
-      console.log(e);
-      this.gameArray[e[0]][e[1]].dot.byeBye();
-      this.gameArray[e[0]][e[1]] = this.defaultValue;
+      /**
+       * Ogólnie to nie mam zielonego pojęcia
+       * dlaczego to raz działa raz nie
+       * ale jakoś nie wiem
+       * poświęce koze może zacznei działać
+       *
+       */
+      try {
+        this.gameArray[e[0]][e[1]].dot.byeBye();
+        this.gameArray[e[0]][e[1]] = this.defaultValue;
+      } catch (e) {}
     });
     this.mark(true);
   }
