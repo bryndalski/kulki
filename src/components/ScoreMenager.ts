@@ -30,7 +30,6 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     this.destroyedDotsArray = [...new Set(this.destroyedDotsArray)];
     //TODO fix me
     this.score += this.destroyedDotsArray.length;
-    console.log(this.score);
 
     return this.destroyedDotsArray;
   }
@@ -79,6 +78,9 @@ export default class ScoreMenager implements ScoreMenagerInterface {
           lastColor = null;
           temporatyCoordsArray = [];
         }
+      }
+      if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+        coordsToDestroy.push(...temporatyCoordsArray);
       }
     }
     return coordsToDestroy;

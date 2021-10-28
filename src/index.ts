@@ -166,6 +166,8 @@ class Game extends Board implements GameInterface {
    * @description removes dots from game array and game
    */
   OMGTheyKilledKenny(destroyArray: Array<[number, number]>) {
+    console.log(destroyArray);
+
     destroyArray.forEach((e) => {
       console.log(e);
       this.gameArray[e[0]][e[1]].dot.byeBye();
