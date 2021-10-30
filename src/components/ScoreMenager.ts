@@ -27,8 +27,12 @@ export default class ScoreMenager implements ScoreMenagerInterface {
   ): Array<[number, number]> {
     let toDestroy = gameArray.map((e) => e.map((f) => f.color));
     //zabijane
+    //TODO ODKOMENTUJ MNEI
     this.destroyedDotsArray.push(...this.mapToKill(toDestroy, false));
     this.destroyedDotsArray.push(...this.mapToKill(toDestroy, true));
+    this.destroyedDotsArray.push(...this.mapToKillAleNaSkos(toDestroy, true)); // góra doł
+    this.destroyedDotsArray.push(...this.mapToKillAleNaSkos(toDestroy, false));
+
     //do zabcia
     this.destroyedDotsArray = [...new Set(this.destroyedDotsArray)];
     //TODO fix me
@@ -51,7 +55,7 @@ export default class ScoreMenager implements ScoreMenagerInterface {
   ): Array<[number, number]> {
     // console.clear();
     // console.table(destroyArray);
-    let coordsToDestroy = [];
+    let coordsToDestroy: Array<[number, number]> = [];
     for (let y: number = 0; y < CONFIG.size; y++) {
       let lastColor: string = "";
       let temporatyCoordsArray: Array<[number, number]> = [];
@@ -87,48 +91,91 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     }
     return coordsToDestroy;
   }
-  // /**
-  //  *
-  //  * @param destroyArray
-  //  * @description Marks all dots to destroy from game from left 0,0 to right bottom
-  //  */
-  // private mapToKillButSlant(destroyArray: Array<Array<string | null>>) {
-  //   let coordsToDestroy = [];
 
-  //   for (let l: number; l < destroyArray.length; l++) {
-  //     let lastColor: string = "";
-  //     let temporatyCoordsArray: Array<[number, number]> = [];
-  //     for (let x: number = l; l >= 0; l--) {
-  //       let f: string | null = destroyArray[l][l];
-  //       if (typeof f == "string" && (lastColor === null || lastColor == f)) {
-  //         // if color is null or has not changed
-  //         lastColor = f;
-  //         temporatyCoordsArray.push([l, l]);
-  //       } else if (
-  //         typeof f == "string" &&
-  //         lastColor !== null &&
-  //         lastColor != f
-  //       ) {
-  //         if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
-  //           coordsToDestroy.push(...temporatyCoordsArray);
-  //         }
-  //         lastColor = f;
-  //         temporatyCoordsArray = [[l,l]];
-  //       } else {
-  //         if (temporatyCoordsArray.length != 0)
-  //           if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
-  //             coordsToDestroy.push(...temporatyCoordsArray);
-  //           }
-  //         lastColor = null;
-  //         temporatyCoordsArray = [];
-  //       }
-  //     }
-  //     if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
-  //       coordsToDestroy.push(...temporatyCoordsArray);
-  //     }
-  //   }
-  //   return coordsToDestroy;
-  // }
+  /**
+   * Jak zbija
+   * 00
+   *
+   * 01 10
+   *
+   * 02 11 30
+   *
+   * 03 12 21 30
+   *
+   * == W 2 strone
+   *
+   * 80
+   *
+   * 70 81
+   *
+   * 60 71 82
+   *
+   *
+   */
+
+  /**
+   *
+   * @param destroyArray
+   * @param direction
+   * true  - od lewego góry [0,0] do prawy dół [8,8]
+   * false - od lewy dół [8,0] dp prawa góra [0,8]
+   */
+
+  private mapToKillAleNaSkos(
+    destroyArray: Array<Array<string | null>>,
+    direction: boolean
+  ): Array<[number, number]> {
+    let coordsToDestroy: Array<[number, number]> = [];
+
+    for (let x: number = 0; x < CONFIG.size; x++) {
+      let lastColor: string = "";
+      let temporatyCoordsArray: Array<[number, number]> = [];
+      for (let y: number = x; y >= 0; y--) {
+        // console.log(x - y, y); /// dla lewo praw góry
+        // console.log(CONFIG.size - 1 - (x - y), y); // dla od prawo do lewo dółu
+        let f: string | null =
+          destroyArray[direction ? x - y : CONFIG.size - 1 - (x - y)][y];
+        if (typeof f == "string" && (lastColor === null || lastColor == f)) {
+          // if color is null or has not changed
+          lastColor = f;
+          temporatyCoordsArray.push([
+            direction ? x - y : CONFIG.size - 1 - (x - y),
+            y,
+          ]);
+          console.log("Warunek 1", temporatyCoordsArray);
+        } else if (
+          typeof f == "string" &&
+          lastColor !== null &&
+          lastColor != f
+        ) {
+          console.log("Warunek 2 przed", temporatyCoordsArray);
+
+          if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+            coordsToDestroy.push(...temporatyCoordsArray);
+          }
+          lastColor = f;
+          temporatyCoordsArray = [
+            [direction ? x - y : CONFIG.size - 1 - (x - y), y],
+          ];
+          console.log("Warunek 2 po", temporatyCoordsArray);
+        } else {
+          console.log("Warunek 3", temporatyCoordsArray);
+
+          if (temporatyCoordsArray.length != 0)
+            if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+              coordsToDestroy.push(...temporatyCoordsArray);
+            }
+          lastColor = null;
+          temporatyCoordsArray = [];
+        }
+      }
+
+      if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+        coordsToDestroy.push(...temporatyCoordsArray);
+      }
+    }
+    return coordsToDestroy;
+  }
 
   /**
    *
