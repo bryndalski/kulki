@@ -6,7 +6,13 @@ export default class Board extends ScoreMenager implements BoardInterface {
   HTMLDivBordArray: HTMLDivElement[][];
   HTMLContainer: HTMLDivElement;
   mouseOverEnable: boolean;
-
+  /**
+   *
+   * @param containerTAG container uery selector
+   * @extends ScoreMenager
+   * @interface BordInterface
+   * @description class to menagement HTML game board
+   */
   constructor(containerTAG: string) {
     super();
     this.HTMLDivBordArray = [[]];
@@ -48,15 +54,16 @@ export default class Board extends ScoreMenager implements BoardInterface {
   }
 
   /**
-   * @override
+   * @override ScoreMenager
    * @param x xCoord
    * @param y yCoord
-   * @description function that handles tile click event
+   * @description function that handles tile click event'
+   *
    */
   public tileClickListen = (x: number, y: number) => {};
 
   /**
-   * @override
+   * @override ScoreMenager
    * @param x xCoord
    * @param y yCoord
    * @description function that handles mouse over event

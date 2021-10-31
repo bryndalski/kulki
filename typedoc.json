@@ -1,0 +1,5 @@
+{
+  "name": "Kuleczki",
+  "entryPoints": ["./src/index.ts", ["./src"], ["./src/components/*"]],
+  "out": "docs"
+}

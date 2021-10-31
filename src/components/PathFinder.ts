@@ -17,6 +17,12 @@ export default class PathFinder implements PathFindingINterface {
   divesToDraw: [number, number][];
   dotColor: string;
   canBeMoved: boolean;
+  /**
+   *
+   * @param divArray array with html divs
+   * @interface PathFindingINterface
+   * @description Class of path finder
+   */
   constructor(divArray) {
     this.divArray = divArray;
     this.findNumber = 0;
@@ -33,7 +39,7 @@ export default class PathFinder implements PathFindingINterface {
   }
 
   /**
-   * Set path finding start algoritm
+   * @description Set path finding start algoritm
    * @param x
    * @param y
    */
@@ -44,29 +50,32 @@ export default class PathFinder implements PathFindingINterface {
     this.numberArry[x][y] = "START";
   }
   /**
-   * Set dot color
+   * @description Set dot color
    * @param color strign color
+   * @public
    */
-  setColor(color: string): void {
+  public setColor(color: string): void {
     this.dotColor = color;
     console.log(this.dotColor);
   }
 
   /**
-   * Set path finding stop algoritm
+   * @description Set path finding stop algoritm
    * @param x
    * @param y
+   * @public
    */
-  setEnd(x: number, y: number): void {
+  public setEnd(x: number, y: number): void {
     this.endPoint.x = x;
     this.endPoint.y = y;
     this.numberArry[x][y] = "END";
   }
   /**
-   * Converts div array to normal array
+   * @description Converts div array to normal array
    * @param gameArray
+   * @public
    */
-  setFindingArray(gameArray: Array<Array<CellInterface>>): void {
+  public setFindingArray(gameArray: Array<Array<CellInterface>>): void {
     this.numberArry = gameArray.map((e, c) => {
       this.pathArray[c] = [];
       return e.map((ie, ic) => {
@@ -78,13 +87,13 @@ export default class PathFinder implements PathFindingINterface {
   }
 
   /**
-   * @function
+   * @private
    * @description Finds path from A to B
-   * @returns Array<[number,number]> coordinates array
+   * @returns {Array<[number,number]>}coordinates array
    */
   //TODO elegancko jest dekorator
   @logger
-  findPath(): Array<[number, number]> {
+  private findPath(): Array<[number, number]> {
     if (this.numerize(this.startPoint.x, this.startPoint.y)) {
       this.canBeMoved = true;
       return [];
@@ -110,7 +119,7 @@ export default class PathFinder implements PathFindingINterface {
   /**
    * @description Changes search availibility to disable
    */
-  stopFinding() {
+  public stopFinding(): void {
     this.canSearch = false;
   }
   /**
@@ -130,12 +139,12 @@ export default class PathFinder implements PathFindingINterface {
     }
   }
   /**
-   * @function
+   *
    * @param x number  coords of x
    * @param y number
    * @returns boolean
    * @description assigns number to all near by coords
-   *
+   * @private
    * @example for cords (3,2) and number 3 assigns :
    *  - for point x:2 y:2 - 4
    *  - for point x:3 y:1 - 4
@@ -144,9 +153,10 @@ export default class PathFinder implements PathFindingINterface {
    * if one of them is marked as "END" returns true
    * else returns false
    *
+   * @returns {boolean} true if END was found
    */
 
-  numerize(x: number, y: number): boolean {
+  private numerize(x: number, y: number): boolean {
     const directions = [
       { x: -1, y: 0 }, //jeden w góre
       { x: 0, y: -1 }, //jeden w lewo
@@ -177,7 +187,7 @@ export default class PathFinder implements PathFindingINterface {
    * @param coordsArray
    * @description Paints path from A to B using div array and aclass `game-title-active`
    */
-  colorize(coordsArray: Array<[number, number]>): void {
+  public colorize(coordsArray: Array<[number, number]>): void {
     if (coordsArray !== null)
       this.divesToDraw = [
         ...coordsArray,
@@ -195,18 +205,18 @@ export default class PathFinder implements PathFindingINterface {
     });
   }
   /**
-   * Removes unused colors
+   * @description Removes unused colors
    */
-  decolorize() {
+  public decolorize() {
     this.divesToDraw.forEach((e) => {
       this.divArray[e[0]][e[1]].style.borderColor = "";
       this.divArray[e[0]][e[1]].style.background = "";
     });
   }
   /**
-   * Creates colors for used path
+   * @description Creates colors for used path
    */
-  darkColorize() {
+  public darkColorize() {
     this.decolorize();
     this.divesToDraw.forEach((e) => {
       this.divArray[e[0]][e[1]].style.backgroundColor = this.convertColor(
@@ -217,7 +227,14 @@ export default class PathFinder implements PathFindingINterface {
     });
   }
 
-  convertColor(color: string, opacity: number): string {
+  /**
+   * @description set color opacity
+   * @param color
+   * @param opacity
+   * @private
+   * @returns {string} color with opacity
+   */
+  private convertColor(color: string, opacity: number): string {
     let colorArray = color.split(",");
     colorArray[3] = `${opacity})`;
     return colorArray.join(",");

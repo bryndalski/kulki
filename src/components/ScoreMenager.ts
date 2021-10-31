@@ -16,12 +16,17 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     this.HTMLDivArray = [[]];
   }
   /**
-   * Set div array
+   * @description Set div array
    * @param HTMLDivBordArray
    */
   protected setDivArray = (HTMLDivBordArray: Array<Array<HTMLDivElement>>) =>
     (this.HTMLDivArray = HTMLDivBordArray);
 
+  /**
+   *
+   * @param gameArray
+   * @description finds all coords for remove
+   */
   public findToDestroy(
     gameArray: Array<Array<CellInterface>>
   ): Array<[number, number]> {
@@ -66,16 +71,13 @@ export default class ScoreMenager implements ScoreMenagerInterface {
         false
       )
     );
-
-    // this.destroyedDotsArray.push(...this.mapToKillAleNaSkos(toDestroy, false));
-
     //do zabcia
     this.destroyedDotsArray = [...new Set(this.destroyedDotsArray)];
     //TODO fix me
     this.setScore(this.destroyedDotsArray.length);
     return this.destroyedDotsArray;
   }
-  /**this.scor
+  /**
    *
    * @param destroyArray
    * @param direcion <0,1>
@@ -187,6 +189,12 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     return coordsToDestroy;
   }
 
+  /**
+   * @description rotates array
+   * @param destroyArray
+   * @param rotationNumber
+   * @returns rotate array
+   */
   private rotateArray90deg(
     destroyArray: Array<Array<{ color: string | null; x: number; y: number }>>,
     rotationNumber: number
@@ -212,10 +220,10 @@ export default class ScoreMenager implements ScoreMenagerInterface {
   /**
    *
    * @param mark true - marks false -unmarks
-   * @description
+   * @description marks and unmarks  destroyd dots
    *
    */
-  public mark(mark: boolean) {
+  public mark(mark: boolean): void {
     this.destroyedDotsArray.forEach((e) => {
       this.HTMLDivArray[e[0]][e[1]].style.backgroundColor = mark
         ? CONFIG.markedColor
@@ -223,7 +231,13 @@ export default class ScoreMenager implements ScoreMenagerInterface {
     });
     if (!mark) this.destroyedDotsArray = [];
   }
-
+  /**
+   *
+   * @param gameArray
+   * @description check if game is winavle maps all evailible coords
+   * @example
+   *  takes game array and find all availible coords
+   */
   public winable(
     gameArray: Array<Array<CellInterface>>
   ): Array<CoordsInterface> {
@@ -237,9 +251,10 @@ export default class ScoreMenager implements ScoreMenagerInterface {
   }
 
   /**
-   *
+   *@description improves score and sets score text
    * @param score
    */
+  //TODO 2 dekorator
   @setContainer
   private setScore(score: number): void {
     this.score += score;

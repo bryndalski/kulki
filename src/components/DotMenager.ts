@@ -4,7 +4,12 @@ export default class DotMenager implements DotMenagerInterface {
   dotPreviewContainer: HTMLDivElement;
   dotArray: Dot[];
   dotsNumber: number;
-
+  /**
+   *
+   * @param ContainerSelector query selector of preview
+   * @param dotsNumber  dots number to be generated
+   * @implements @interface DotMenagerInterface
+   */
   constructor(ContainerSelector: string, dotsNumber: number) {
     this.dotPreviewContainer = document.querySelector(
       ContainerSelector
@@ -14,7 +19,7 @@ export default class DotMenager implements DotMenagerInterface {
   }
   //TODO przed sprawdzeniem daj do sprawdzenia
   /**
-   * Allows to add specyfic dot number
+   * @description Allows to add specyfic dot number
    * @param dotNumber
    */
   addDots(): void {
@@ -27,6 +32,11 @@ export default class DotMenager implements DotMenagerInterface {
     }
   }
 
+  /**
+   * @description removes dot from HTML preview an returns dot array that has been generated with  @addDots
+   * @returns array with dot
+   * @interface Dot
+   */
   releaseDots(): Array<Dot> {
     this.dotArray.forEach((e) => e.byeBye());
     return this.dotArray;

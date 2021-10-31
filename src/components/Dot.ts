@@ -10,6 +10,7 @@ export default class Dot implements DotInterface {
   /**
    * @description Single dot class
    * @bryndalski
+   * @interface DotInterface
    */
   constructor() {
     this.colors = CONFIG.colors;
@@ -23,7 +24,7 @@ export default class Dot implements DotInterface {
    * @bryndalski
    * @return dot
    */
-  createDot(): HTMLDivElement {
+  public createDot(): HTMLDivElement {
     this.dot.classList.add("game--dot");
     this.dotColor =
       this.colors[Math.floor(Math.random() * CONFIG.colors.length)];
@@ -47,9 +48,10 @@ export default class Dot implements DotInterface {
   public guessWhoIsBack = (): HTMLDivElement => this.dot;
 
   /**
-   *
+   * @description selects/deselect dot
+   * @public
    */
-  select() {
+  public select(): void {
     if (!this.isSelected) this.dot.classList.add("game--dotBIG");
     else this.dot.classList.remove("game--dotBIG");
     this.isSelected = !this.isSelected;

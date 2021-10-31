@@ -4,7 +4,11 @@ export default class SelectedCords implements SelectedCordsInterface {
   isSelected: boolean;
   x: number | null;
   y: number | null;
-
+  /**
+   * @interface SelectedCordsInterface
+   * @class
+   * @description Coords of selcted dot
+   */
   constructor() {
     (this.x = null), (this.y = null), (this.isSelected = false);
   }
@@ -26,7 +30,7 @@ export default class SelectedCords implements SelectedCordsInterface {
   /**
    * @description Clears all set coordinates and set is selected to false
    */
-  clear(): void {
+  public clear(): void {
     this.isSelected = false;
     this.x = null;
     this.y = null;
@@ -37,7 +41,7 @@ export default class SelectedCords implements SelectedCordsInterface {
    * @param x <number> x doord
    * @param y <number> y coord
    */
-  setNew(isSelected: boolean, x: number, y: number): void {
+  public setNew(isSelected: boolean, x: number, y: number): void {
     this.isSelected = isSelected;
     this.x = x;
     this.y = y;

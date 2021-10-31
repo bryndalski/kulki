@@ -14,7 +14,12 @@ class Game extends Board implements GameInterface {
   dotMenager: DotMenager;
   readonly dotNumber: number;
   pathFinder: PathFinder;
-
+  /**
+   * @extends Board
+   * @interface GameInterface
+   * @description main game menagement class
+   * @public
+   */
   constructor() {
     super(".game--board");
     this.defaultValue = {
@@ -32,7 +37,8 @@ class Game extends Board implements GameInterface {
     this.init();
   }
   /**
-   * Inits whole class
+   * @description Inits whole class
+   *
    */
   private init(): void {
     this.createContainer(9);
@@ -47,10 +53,14 @@ class Game extends Board implements GameInterface {
     this.addDots();
   }
   /**
-   * Allows to add dot numbe
+   * @description Add new dots to game
+   * @example if possible coords number is greater or equal to minimum required specified in {@link config.ts} file
+   * find random coords from it and assign dot to array with same [x,y] found in coords
+   * if coords number is lower than dot number it mean that there is no chance of continuing game and
+   * game will end
    *
    */
-  addDots(): void {
+  public addDots(): void {
     let possibleCoords: Array<CoordsInterface> = this.winable(this.gameArray);
     if (possibleCoords.length >= CONFIG.dotNumber) {
       this.dotMenager.releaseDots().forEach((e: Dot) => {
@@ -74,15 +84,15 @@ class Game extends Board implements GameInterface {
     } else this.endGame(this.gameArray);
   }
   /**
-   * Handles hod clicking
-   * @description Overwrittes method from Board
+   * @description Handles hod clicking
+   *
    * @event
    * @click
    * @override Bord
    * @param x
    * @param y
    */
-  tileClickListen = (x: number, y: number): void => {
+  public tileClickListen = (x: number, y: number): void => {
     if (this.gameArray[x][y].empty && this.nowSelected.isSelected) {
       // handle move click
       this.gameArray[this.nowSelected.getX()][
@@ -119,11 +129,11 @@ class Game extends Board implements GameInterface {
     }
   };
   /**
-   * Moves dot from one place to another :p
+   * @description Moves dot from one place to another specified with [{@param x} {@param y}]
    * @param x
    * @param y
    */
-  moveDot(x: number, y: number) {
+  public moveDot(x: number, y: number) {
     let temporatyBox =
       this.gameArray[this.nowSelected.getX()][this.nowSelected.getY()];
     this.gameArray[this.nowSelected.getX()][
@@ -143,11 +153,11 @@ class Game extends Board implements GameInterface {
   }
 
   /**
-   * Handle mouse move at each div
+   * @description Handle mouse move at each div
    * @param x
    * @param y
    */
-  tileMouseOverListener = (x: number, y: number): void => {
+  public tileMouseOverListener = (x: number, y: number): void => {
     if (this.mouseOverEnable) {
       this.pathFinder.stopFinding();
       this.pathFinder.decolorize();
