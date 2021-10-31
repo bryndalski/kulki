@@ -25,13 +25,22 @@ export default class ScoreMenager implements ScoreMenagerInterface {
   public findToDestroy(
     gameArray: Array<Array<CellInterface>>
   ): Array<[number, number]> {
+    console.clear();
     let toDestroy = gameArray.map((e) => e.map((f) => f.color));
     //zabijane
     //TODO ODKOMENTUJ MNEI
-    this.destroyedDotsArray.push(...this.mapToKill(toDestroy, false));
-    this.destroyedDotsArray.push(...this.mapToKill(toDestroy, true));
-    this.destroyedDotsArray.push(...this.mapToKillAleNaSkos(toDestroy, true)); // góra doł
-    this.destroyedDotsArray.push(...this.mapToKillAleNaSkos(toDestroy, false));
+    // this.destroyedDotsArray.push(...this.mapToKill(toDestroy, false));
+    // this.destroyedDotsArray.push(...this.mapToKill(toDestroy, true));
+    this.destroyedDotsArray.push(
+      ...this.mapToKillAleNaSkos(
+        this.rotateArray90deg(
+          toDestroy.map((r, x) => r.map((e, y) => ({ color: e, x, y }))), // robi 1 połowe
+          0
+        )
+      )
+    ); // góra doł
+
+    // this.destroyedDotsArray.push(...this.mapToKillAleNaSkos(toDestroy, false));
 
     //do zabcia
     this.destroyedDotsArray = [...new Set(this.destroyedDotsArray)];
@@ -122,49 +131,78 @@ export default class ScoreMenager implements ScoreMenagerInterface {
    */
 
   private mapToKillAleNaSkos(
-    destroyArray: Array<Array<string | null>>,
-    direction: boolean
+    destroyArray: Array<Array<{ color: string | null; x: number; y: number }>>
   ): Array<[number, number]> {
     let coordsToDestroy: Array<[number, number]> = [];
-
+    console.table(destroyArray);
     for (let x: number = 0; x < CONFIG.size; x++) {
       let lastColor: string = "";
       let temporatyCoordsArray: Array<[number, number]> = [];
       for (let y: number = x; y >= 0; y--) {
-        // console.log(x - y, y); /// dla lewo praw góry
-        // console.log(CONFIG.size - 1 - (x - y), y); // dla od prawo do lewo dółu
-        let f: string | null =
-          destroyArray[direction ? x - y : CONFIG.size - 1 - (x - y)][y];
+        let f: string | null = destroyArray[x - y][y].color;
         if (typeof f == "string" && (lastColor === null || lastColor == f)) {
           // if color is null or has not changed
           lastColor = f;
           temporatyCoordsArray.push([
-            direction ? x - y : CONFIG.size - 1 - (x - y),
-            y,
+            destroyArray[x - y][y].x,
+            destroyArray[x - y][y].y,
           ]);
-          console.log("Warunek 1", temporatyCoordsArray);
+          // if (temporatyCoordsArray.length > 0)
+          // console.log(
+          //   "Warunek 1 ",
+          //   temporatyCoordsArray,
+          //   "dla x = ",
+          //   x,
+          //   "y = ",
+          //   y
+          // );
         } else if (
           typeof f == "string" &&
           lastColor !== null &&
           lastColor != f
         ) {
-          console.log("Warunek 2 przed", temporatyCoordsArray);
+          // if (temporatyCoordsArray.length > 0)
+          // console.log(
+          //   "Warunek 2 przed",
+          //   temporatyCoordsArray,
+          //   "dla x = ",
+          //   x,
+          //   "y = ",
+          //   y
+          // );
 
           if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
             coordsToDestroy.push(...temporatyCoordsArray);
           }
           lastColor = f;
           temporatyCoordsArray = [
-            [direction ? x - y : CONFIG.size - 1 - (x - y), y],
+            [destroyArray[x - y][y].x, destroyArray[x - y][y].y],
           ];
-          console.log("Warunek 2 po", temporatyCoordsArray);
-        } else {
-          console.log("Warunek 3", temporatyCoordsArray);
 
-          if (temporatyCoordsArray.length != 0)
-            if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
-              coordsToDestroy.push(...temporatyCoordsArray);
-            }
+          // if (temporatyCoordsArray.length > 0)
+          // console.log(
+          //   "Warunek 2 po",
+          //   temporatyCoordsArray,
+          //   "dla x = ",
+          //   x,
+          //   "y = ",
+          //   y
+          // );
+        } else {
+          if (temporatyCoordsArray.length > 0)
+            if (temporatyCoordsArray.length != 0)
+              if (temporatyCoordsArray.length >= CONFIG.destroyNumber) {
+                // console.log(
+                //   "Warunek 3",
+                //   temporatyCoordsArray,
+                //   "dla x = ",
+                //   x,
+                //   "y = ",
+                //   y
+                // );
+
+                coordsToDestroy.push(...temporatyCoordsArray);
+              }
           lastColor = null;
           temporatyCoordsArray = [];
         }
@@ -175,6 +213,25 @@ export default class ScoreMenager implements ScoreMenagerInterface {
       }
     }
     return coordsToDestroy;
+  }
+
+  private rotateArray90deg(
+    destroyArray: Array<Array<{ color: string | null; x: number; y: number }>>,
+    rotationNumber: number
+  ) {
+    for (let i: number; i < rotationNumber; i++)
+      for (let x = 0; x < CONFIG.size / 2; x++) {
+        for (let y = x; y < CONFIG.size - x - 1; y++) {
+          let temp = destroyArray[x][y];
+          destroyArray[x][y] = destroyArray[y][CONFIG.size - 1 - x];
+          destroyArray[y][CONFIG.size - 1 - x] =
+            destroyArray[CONFIG.size - 1 - x][CONFIG.size - 1 - y];
+          destroyArray[CONFIG.size - 1 - x][CONFIG.size - 1 - y] =
+            destroyArray[CONFIG.size - 1 - y][x];
+          destroyArray[CONFIG.size - 1 - y][x] = temp;
+        }
+      }
+    return destroyArray;
   }
 
   /**
