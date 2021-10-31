@@ -21,9 +21,9 @@ export default class Dot implements DotInterface {
    * @description creates single dot with random color from array
    * @method
    * @bryndalski
-   * @return dot<HTMLDivElement> dot
+   * @return dot
    */
-  createDot() {
+  createDot(): HTMLDivElement {
     this.dot.classList.add("game--dot");
     this.dotColor =
       this.colors[Math.floor(Math.random() * CONFIG.colors.length)];
@@ -31,17 +31,24 @@ export default class Dot implements DotInterface {
     return this.dot;
   }
   /**
-   * Removes dot from HTML
+   * @description Removes dot from HTML
+   * @method
+   * @public
    */
-  byeBye = (): void => {
+  public byeBye = (): void => {
     this.dot.remove();
   };
 
   /**
-   * Adds dot to HTML
+   * @description contains html dot element
+   * @returns dot html element
+   * @public
    */
-  guessWhoIsBack = (): HTMLDivElement => this.dot;
+  public guessWhoIsBack = (): HTMLDivElement => this.dot;
 
+  /**
+   *
+   */
   select() {
     if (!this.isSelected) this.dot.classList.add("game--dotBIG");
     else this.dot.classList.remove("game--dotBIG");

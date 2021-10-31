@@ -51,13 +51,15 @@ export default class Board extends ScoreMenager implements BoardInterface {
    * @override
    * @param x xCoord
    * @param y yCoord
+   * @description function that handles tile click event
    */
-  tileClickListen = (x: number, y: number) => {};
+  public tileClickListen = (x: number, y: number) => {};
 
   /**
    * @override
    * @param x xCoord
    * @param y yCoord
+   * @description function that handles mouse over event
    */
-  tileMouseOverListener = (x: number, y: number) => {};
+  public tileMouseOverListener = (x: number, y: number) => {};
 }
