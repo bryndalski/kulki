@@ -7,6 +7,7 @@ import SelectedCords from "./components/SelectedCords";
 import DotMenager from "./components/DotMenager";
 import CONFIG from "./config";
 import PathFinder from "./components/PathFinder";
+import { setArray } from "./components/decorators";
 class Game extends Board implements GameInterface {
   gameArray: Array<Array<CellInterface>>;
   defaultValue: CellInterface;
@@ -40,14 +41,10 @@ class Game extends Board implements GameInterface {
    * @description Inits whole class
    *
    */
+  @setArray
   private init(): void {
     this.createContainer(9);
-    for (let i: number = 0; i < 9; i++) {
-      this.gameArray[i] = [];
-      for (let j: number = 0; j < 9; j++) {
-        this.gameArray[i].push(this.defaultValue);
-      }
-    }
+
     this.dotMenager.addDots();
 
     this.addDots();

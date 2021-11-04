@@ -13,11 +13,17 @@ export function logger(
   };
   return descriptor;
 }
-
-export function indexInit(constructor: Function) {
-  console.log("XDDD");
-
-  console.log(constructor);
+export function setArray(ob: Object, name: string, desc: PropertyDescriptor) {
+  let oryg = desc.value;
+  desc.value = function (...args: any[]) {
+    for (let i: number = 0; i < 9; i++) {
+      this.gameArray[i] = [];
+      for (let j: number = 0; j < 9; j++) {
+        this.gameArray[i].push(this.defaultValue);
+      }
+    }
+    return oryg.apply(this, args);
+  };
 }
 
 /**
