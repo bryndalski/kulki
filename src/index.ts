@@ -77,7 +77,10 @@ class Game extends Board implements GameInterface {
         possibleCoords.splice(coordNumber, 1);
       });
       this.dotMenager.addDots();
-      this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
+      let toDestroy = this.findToDestroy(this.gameArray);
+      if (possibleCoords.length === CONFIG.dotNumber && toDestroy.length === 0)
+        this.endGame(this.gameArray);
+      else this.OMGTheyKilledKenny(toDestroy);
     } else this.endGame(this.gameArray);
   }
   /**
