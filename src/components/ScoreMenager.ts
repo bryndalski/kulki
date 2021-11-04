@@ -30,6 +30,9 @@ export default class ScoreMenager implements ScoreMenagerInterface {
   public findToDestroy(
     gameArray: Array<Array<CellInterface>>
   ): Array<[number, number]> {
+    this.destroyedDotsArray = [];
+    console.log("nowa", this.destroyedDotsArray);
+
     let toDestroy = gameArray.map((e) => e.map((f) => f.color));
     //zabijane
     //TODO ODKOMENTUJ MNEI
@@ -72,8 +75,12 @@ export default class ScoreMenager implements ScoreMenagerInterface {
       )
     );
     //do zabcia
-    this.destroyedDotsArray = [...new Set(this.destroyedDotsArray)];
+    this.destroyedDotsArray = [
+      ...new Set(this.destroyedDotsArray.map((e) => JSON.stringify(e))),
+    ].map((e) => JSON.parse(e));
     //TODO fix me
+    console.log("po wszystkim", this.destroyedDotsArray);
+
     this.setScore(this.destroyedDotsArray.length);
     return this.destroyedDotsArray;
   }
@@ -229,7 +236,6 @@ export default class ScoreMenager implements ScoreMenagerInterface {
         ? CONFIG.markedColor
         : CONFIG.unmarkedColor;
     });
-    if (!mark) this.destroyedDotsArray = [];
   }
   /**
    *
