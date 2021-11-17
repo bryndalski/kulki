@@ -14,7 +14,7 @@ const CONFIG: CONFIGINTERFACE = {
   trackOpacity: 0.4,
   usedTrackOpacity: 0.3,
   borderColor: "orange",
-  destroyNumber: 7,
+  destroyNumber: 3,
   size: 9,
 
   markedColor: "rgba(254, 1, 154, 0.2)",

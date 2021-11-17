@@ -148,8 +148,8 @@ class Game extends Board implements GameInterface {
     );
     this.pathFinder.stopFinding();
     this.pathFinder.darkColorize();
-    this.addDots();
-    this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray));
+    if (this.OMGTheyKilledKenny(this.findToDestroy(this.gameArray)))
+      this.addDots();
   }
 
   /**
@@ -171,7 +171,7 @@ class Game extends Board implements GameInterface {
   /**
    * @description removes dots from game array and game
    */
-  OMGTheyKilledKenny(destroyArray: Array<[number, number]>) {
+  OMGTheyKilledKenny(destroyArray: Array<[number, number]>): boolean {
     destroyArray.forEach((e) => {
       /**
        * Ogólnie to nie mam zielonego pojęcia
@@ -186,6 +186,7 @@ class Game extends Board implements GameInterface {
       } catch (e) {}
     });
     this.mark(true);
+    return destroyArray.length === 0;
   }
 }
 
